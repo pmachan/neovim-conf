@@ -197,6 +197,16 @@ function M.setup()
 	hi("TelescopeSelection",    { fg = p.text, bg = p.panel2 })
 	hi("TelescopeMatching",     { fg = p.accent, bold = true })
 
+	-- ---- Plugin: snacks.picker (LazyVim default picker) ----
+	hi("SnacksPickerFile",        { fg = p.text })             -- file basename (bright)
+	hi("SnacksPickerDir",         { fg = p.muted })            -- dirname prefix (readable, dim)
+	hi("SnacksPickerPathHidden",  { fg = p.dim })              -- hidden files/dirs
+	hi("SnacksPickerPathIgnored", { fg = p.dim, italic = true }) -- gitignored
+	hi("SnacksPickerDirectory",   { fg = p.blue })             -- directory entries
+	hi("SnacksPickerMatch",       { fg = p.accent, bold = true }) -- matched query chars
+	hi("SnacksPickerCol",         { fg = p.dim })              -- :col number
+	hi("SnacksPickerRow",         { fg = p.green })            -- :line number
+
 	-- ---- Plugin: bufferline (minimal) ----
 	hi("BufferLineFill",        { bg = p.bg })
 
