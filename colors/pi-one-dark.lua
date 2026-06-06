@@ -156,6 +156,10 @@ function M.setup()
 	hi("DiagnosticUnderlineWarn",  { undercurl = true, sp = p.accent })
 	hi("DiagnosticUnderlineInfo",  { undercurl = true, sp = p.blue })
 	hi("DiagnosticUnderlineHint",  { undercurl = true, sp = p.cyan })
+	-- Unused / dead code (gopls tags it "Unnecessary") + deprecated APIs:
+	-- dim + strike-through so it's unmistakable.
+	hi("DiagnosticUnnecessary", { fg = p.dim, strikethrough = true })
+	hi("DiagnosticDeprecated",  { fg = p.dim, strikethrough = true })
 
 	-- ---- Git / diff (toolDiff* + success/error) ----
 	hi("DiffAdd",       { fg = p.green, bg = p.panel })

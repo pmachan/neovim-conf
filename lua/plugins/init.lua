@@ -325,6 +325,27 @@ return {
       vim.keymap.set("n", "<leader>gr", "<cmd>GoRun<cr>", { desc = "Go run" })
       vim.keymap.set("n", "<leader>gc", "<cmd>GoCoverage<cr>", { desc = "Coverage" })
       vim.keymap.set("n", "<leader>gi", "<cmd>GoImpl<cr>", { desc = "Impl iface" })
+
+      -- Whole-program dead code (incl. unused EXPORTED funcs that gopls can't
+      -- flag). Install once: go install golang.org/x/tools/cmd/deadcode@latest
+      vim.keymap.set("n", "<leader>gd", function()
+        local bin = vim.fn.exepath("deadcode")
+        if bin == "" then
+          local fallback = vim.fn.expand("~/go/bin/deadcode") -- GUI may strip PATH
+          if vim.fn.executable(fallback) == 1 then bin = fallback end
+        end
+        if bin == "" then
+          vim.notify("Install: go install golang.org/x/tools/cmd/deadcode@latest", vim.log.levels.WARN)
+          return
+        end
+        local out = vim.fn.systemlist({ bin, "./..." })
+        if #out == 0 then
+          vim.notify("deadcode: no dead code found")
+          return
+        end
+        vim.fn.setqflist({}, " ", { title = "deadcode", lines = out })
+        vim.cmd("copen")
+      end, { desc = "Dead code (whole program)" })
     end,
   },
 
