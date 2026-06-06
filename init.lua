@@ -38,6 +38,13 @@ vim.keymap.set("i", "<D-v>", "<C-r><C-o>+", { desc = "Paste from clipboard" })
 vim.keymap.set("c", "<D-v>", "<C-r>+", { desc = "Paste from clipboard" })
 vim.keymap.set("x", "<D-v>", '"_dP', { desc = "Paste over selection" })
 
+-- Cmd+S = save (macOS muscle memory). <cmd>w<cr> runs :w and returns to the
+-- prior mode, so it works from normal AND insert mode without dropping you out
+-- of insert. Same Cmd-forwarding caveat as above: only fires if your terminal/
+-- GUI sends <D-…> to Neovim. <leader>w (Space w) is the always-works fallback.
+vim.keymap.set({ "n", "i", "x" }, "<D-s>", "<cmd>w<cr>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save file" })
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
