@@ -59,6 +59,24 @@ end
 map({ "n", "t" }, "<A-F12>", term, { desc = "Terminal" })
 map("n", "<leader>tt", term, { desc = "Terminal" })
 
+-- Fix out-of-sync colors. Treesitter highlighting (and LSP semantic tokens)
+-- occasionally drift on big files; :redraw alone won't help because it just
+-- repaints the stale state. This re-attaches the treesitter highlighter,
+-- re-requests semantic tokens, clears search highlight, and redraws — without
+-- reloading the buffer, so unsaved edits are kept. Runnable as :Rehighlight or
+-- via <leader>ur (extends LazyVim's redraw key).
+local function rehighlight()
+  pcall(vim.treesitter.stop)
+  pcall(vim.treesitter.start)
+  pcall(function()
+    vim.lsp.semantic_tokens.force_refresh()
+  end)
+  vim.cmd("nohlsearch")
+  vim.cmd("redraw!")
+end
+vim.api.nvim_create_user_command("Rehighlight", rehighlight, { desc = "Refresh treesitter/LSP highlighting" })
+map("n", "<leader>ur", rehighlight, { desc = "Refresh highlighting (redraw)" })
+
 -- which-key: list buffer-local mappings.
 map("n", "<leader>?", function()
   require("which-key").show({ global = false })
