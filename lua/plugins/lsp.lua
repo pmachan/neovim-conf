@@ -24,6 +24,31 @@ return {
           end, "Toggle inlay hints")
         end,
       })
+
+      -- Terragrunt + OpenTofu: modules/providers live in .terragrunt-cache, not
+      -- .terraform, but terraform-ls still runs plain `terraform validate` — which
+      -- (with no `terraform init` and none of terragrunt's generated inputs)
+      -- always reports false "Module not installed" / "Missing required provider"
+      -- errors. Drop diagnostics from that source; terraform-ls's HCL syntax/parse
+      -- diagnostics use a different source and are kept, and real validation is
+      -- handled by terragrunt/tofu + tflint.
+      -- Wrap the final diagnostic sink so it catches both push
+      -- (publishDiagnostics) and pull (textDocument/diagnostic) paths —
+      -- terraform-ls uses pull diagnostics, so a publishDiagnostics handler
+      -- never sees these.
+      if not vim.g._tf_validate_filtered then
+        vim.g._tf_validate_filtered = true
+        local orig_set = vim.diagnostic.set
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.diagnostic.set = function(ns, bufnr, diagnostics, opts)
+          if type(diagnostics) == "table" then
+            diagnostics = vim.tbl_filter(function(d)
+              return d.source ~= "terraform validate"
+            end, diagnostics)
+          end
+          return orig_set(ns, bufnr, diagnostics, opts)
+        end
+      end
     end,
     opts = {
       -- Off by default; toggle per-buffer with <leader>th (or LazyVim's <leader>uh).
