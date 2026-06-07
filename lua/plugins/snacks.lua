@@ -17,6 +17,14 @@ return {
           explorer = {
             hidden = true,
             ignored = true,
+            -- Don't let <Esc> close the explorer (snacks maps it to "cancel" in
+            -- both the tree list and the filter input). false removes the
+            -- mapping; close it with its toggle key, or Ctrl-l to hop back to
+            -- the editor while leaving it open.
+            win = {
+              list = { keys = { ["<Esc>"] = false } },
+              input = { keys = { ["<Esc>"] = false } },
+            },
           },
         },
         layouts = {
